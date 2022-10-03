@@ -1,9 +1,10 @@
 import torch
 from torch import nn
 from d2l import torch as d2l
-import model_Net
+from pytorch_NN.backbones import model_Net
 import time
-import conf
+
+
 def timer(func):
     def func_in():
         start_time = time.time()
@@ -16,7 +17,7 @@ def timer(func):
 class TrainNet():
     def __init__(self,net):
         self.net_name=net
-        self.net=model_Net.Net_CNN(net).run()
+        self.net= model_Net.Net_CNN(net).run()
         self.run()
 
     def run(self):
