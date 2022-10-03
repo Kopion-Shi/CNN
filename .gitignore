@@ -1,10 +1,10 @@
 data
 
 
-pytorch/.idea/modules.xml
-pytorch/.idea/pytorch.iml
-pytorch/.idea/vcs.xml
-pytorch/.idea/workspace.xml
-pytorch/.idea/inspectionProfiles/profiles_settings.xml
-pytorch/.idea/inspectionProfiles/Project_Default.xml
-pytorch/4.0/submission.csv
+pytorch_NN/.idea/modules.xml
+pytorch_NN/.idea/pytorch.iml
+pytorch_NN/.idea/vcs.xml
+pytorch_NN/.idea/workspace.xml
+pytorch_NN/.idea/inspectionProfiles/profiles_settings.xml
+pytorch_NN/.idea/inspectionProfiles/Project_Default.xml
+pytorch_NN/4.0/submission.csv
