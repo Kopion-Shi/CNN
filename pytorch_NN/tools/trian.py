@@ -139,7 +139,7 @@ class Train():
         # 正确预测的数量，总预测的数量
         metric = Accumulator(2)
         with torch.no_grad():
-            print(data_iter)
+            # print(data_iter)
             for X, y in data_iter:
                 if isinstance(X, list):
                     # BERT微调所需的（之后将介绍）
@@ -169,7 +169,7 @@ class Train():
             if type(m) == nn.Linear or type(m) == nn.Conv2d:
                 nn.init.xavier_uniform_(m.weight)
         self.net.apply(init_weights)
-        print('training on', device)
+        # print('training on', device)
         self.net.to(device)
 
         optimizer = torch.optim.SGD(self.net.parameters(), lr=lr)
@@ -195,23 +195,15 @@ class Train():
                 timer.stop()
                 train_l = metric[0] / metric[2]
                 train_acc = metric[1] / metric[2]
-                # if (i + 1) % (num_batches // 5) == 0 or i == num_batches - 1:
-                #     animator.add(epoch + (i + 1) / num_batches,
-                #                  (train_l, train_acc, None))
             test_acc = self.evaluate_accuracy_gpu(self.test_iter)
-            # animator.add(epoch + 1, (None, None, test_acc))
-            print(f'loss {train_l:.3f}, train acc {train_acc:.3f}, '
-                  f'test acc {test_acc:.3f}')
-            print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
-                  f'on {str(device)}')
-        print(f'loss {train_l:.3f}, train acc {train_acc:.3f}, '
-              f'test acc {test_acc:.3f}')
-        print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
-              f'on {str(device)}')
-
-
-
-
+            print('epoch：num{}'.format(epoch),f'loss {train_l:.3f}, train acc {train_acc:.3f}, 'f'test acc {test_acc:.3f}',
+                  f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec 'f'on {str(device)}',
+                  'run time:{}'.format(timer.sum()))
+            print('=========================================================')
+        print('train over',
+              'run time:{}'.format(timer.sum(),
+            f'loss {train_l:.3f}, train acc {train_acc:.3f}, 'f'test acc {test_acc:.3f}',
+              f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec 'f'on {str(device)}'))
 
 
 if __name__=='__main__':
