@@ -107,7 +107,13 @@ class Accumulator:
         return self.data[idx]
 
 
-from pytorch_NN.config.backbones .AlexNet import AlexNet
+# 导入SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
+# 创建SummaryWriter实例，指定log_dir的位置
+
+
+from pytorch_NN.config.backbones.AlexNet import AlexNet
+import os
 class Train():
     def __init__(self):
         get_dataloader_workers = 8
@@ -115,7 +121,7 @@ class Train():
         resize = 224
         self.train_iter= Date(get_dataloader_workers,batch_size).train_iter(resize)
         self.test_iter = Date(get_dataloader_workers,batch_size).test_iter(resize)
-        self.net= AlexNet().feature()
+        self.net= AlexNet()
 
     def accuracy(self,y_hat, y):
         """Compute the number of correct predictions.
@@ -164,6 +170,9 @@ class Train():
         Defined in :numref:`sec_lenet`"""
 
         device=self.try_gpu()
+        ##保存模型数据
+        writer = SummaryWriter('D:/00_github/CNN/pytorch_NN/logs/logs/tensorboard/{}'.format(time.time()))
+        writer.add_graph(self.net,input_to_model = torch.rand(1,1,224,224))
 
         def init_weights(m):
             if type(m) == nn.Linear or type(m) == nn.Conv2d:
@@ -177,7 +186,7 @@ class Train():
         # animator = Animator(xlabel='epoch', xlim=[1, num_epochs],
         #                         legend=['train loss', 'train acc', 'test acc'])  #画图
         timer, num_batches = Timer(), len(self.train_iter)
-        # print(num_epochs)
+
         for epoch in range(num_epochs):
             # Sum of training loss, sum of training accuracy, no. of examples
             metric = Accumulator(3)
@@ -190,12 +199,19 @@ class Train():
                 l = loss(y_hat, y)
                 l.backward()
                 optimizer.step()
+                # print(self.net.parameters())
+                # writer.add_histogram("w", m, i)
                 with torch.no_grad():
                     metric.add(l * X.shape[0],self.accuracy(y_hat, y), X.shape[0])
                 timer.stop()
                 train_l = metric[0] / metric[2]
                 train_acc = metric[1] / metric[2]
+
+                writer.add_scalar("train_l", train_l, i)  # 日志中记录x在第step i 的值
+                writer.add_scalar("train_acc", train_acc, i)  # 日志中记录y在第step i 的值
+                # writer.add_scalar(tag='loss/train',scalar_value=loss,global_step=i)
             test_acc = self.evaluate_accuracy_gpu(self.test_iter)
+            writer.add_scalar("test_acc", test_acc, epoch)
             print('epoch：num{}'.format(epoch),f'loss {train_l:.3f}, train acc {train_acc:.3f}, 'f'test acc {test_acc:.3f}',
                   f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec 'f'on {str(device)}',
                   'run time:{}'.format(timer.sum()))
@@ -205,8 +221,10 @@ class Train():
             f'loss {train_l:.3f}, train acc {train_acc:.3f}, 'f'test acc {test_acc:.3f}',
               f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec 'f'on {str(device)}'))
 
+        # 保存模型示例代码
+
 
 if __name__=='__main__':
     net=Train()
-    lr, num_epochs = 0.01, 10
+    lr, num_epochs = 0.01, 50
     net.train_ch6(lr=lr, num_epochs=num_epochs)
