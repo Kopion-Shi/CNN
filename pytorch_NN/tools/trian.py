@@ -116,7 +116,7 @@ from pytorch_NN.config.backbones.AlexNet import AlexNet
 import os
 class Train():
     def __init__(self):
-        get_dataloader_workers = 8
+        get_dataloader_workers = 4
         batch_size = 128
         resize = 224
         self.train_iter= Date(get_dataloader_workers,batch_size).train_iter(resize)
@@ -186,7 +186,7 @@ class Train():
         # animator = Animator(xlabel='epoch', xlim=[1, num_epochs],
         #                         legend=['train loss', 'train acc', 'test acc'])  #画图
         timer, num_batches = Timer(), len(self.train_iter)
-
+        print('开始训练',''f' on {str(device)}')
         for epoch in range(num_epochs):
             # Sum of training loss, sum of training accuracy, no. of examples
             metric = Accumulator(3)
